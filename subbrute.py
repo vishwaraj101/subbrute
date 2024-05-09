@@ -15,7 +15,6 @@ import signal
 import time
 import sys
 import uuid
-import random
 import ctypes
 import json
 import string
@@ -23,6 +22,7 @@ import itertools
 import datetime
 import socket
 import struct
+import secrets
 
 #Python 2.x and 3.x compatiablity
 #We need the Queue library for exception handling
@@ -202,7 +202,7 @@ class verify_nameservers(multiprocessing.Process):
 
     def run(self):
         #Every user will get a different set of resovlers, this helps redistribute traffic.
-        random.shuffle(self.resolver_list)
+        secrets.SystemRandom().shuffle(self.resolver_list)
         if not self.verify(self.resolver_list):
             #This should never happen,  inform the user.
             sys.stderr.write('Warning: No nameservers found, trying fallback list.\n')
@@ -244,7 +244,7 @@ class verify_nameservers(multiprocessing.Process):
             test_counter -= 1            
             try:
                 #Using a 32 char string every time may be too predictable.
-                x = uuid.uuid4().hex[0:random.randint(6, 32)]
+                x = uuid.uuid4().hex[0:secrets.SystemRandom().randint(6, 32)]
                 testdomain = "%s.%s" % (x, host)
                 wildtest = self.resolver.query(testdomain, self.query_type, server)
                 #This record may contain a list of wildcards.

@@ -7,10 +7,11 @@
 
 from __future__ import print_function
 
-import base64,binascii,collections,copy,os.path,random,socket,\
+import base64,binascii,collections,copy,os.path,socket,\
        string,struct,textwrap,time
 
 from itertools import chain
+import secrets
 
 try:
     from itertools import zip_longest
@@ -487,7 +488,7 @@ class DNSHeader(object):
 
     def __init__(self,id=None,bitmap=None,q=0,a=0,auth=0,ar=0,**args):
         if id is None:
-            self.id = random.randint(0,65535)
+            self.id = secrets.SystemRandom().randint(0,65535)
         else:
             self.id = id 
         if bitmap is None:
