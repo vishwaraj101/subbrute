@@ -140,7 +140,7 @@ class DigParser:
                 rd = RDMAP.get(rtype,RD)
                 try:
                     if rd == RD and \
-                       any([ x not in string.hexdigits for x in rdata[-1]]):
+                       any(x not in string.hexdigits for x in rdata[-1]):
                         # Only support hex encoded data for fallback RD
                         pass
                     else:

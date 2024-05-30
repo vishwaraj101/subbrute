@@ -626,7 +626,7 @@ class DNSHeader(object):
         else:
             # Ignore id
             attrs = ('qr','aa','tc','rd','ra','opcode','rcode')
-            return all([getattr(self,x) == getattr(other,x) for x in attrs])
+            return all(getattr(self,x) == getattr(other,x) for x in attrs)
 
 class DNSQuestion(object):
     
@@ -684,7 +684,7 @@ class DNSQuestion(object):
         else:
             # List of attributes to compare when diffing
             attrs = ('qname','qtype','qclass')
-            return all([getattr(self,x) == getattr(other,x) for x in attrs])
+            return all(getattr(self,x) == getattr(other,x) for x in attrs)
             
 class EDNSOption(object):
 
@@ -739,7 +739,7 @@ class EDNSOption(object):
         else:
             # List of attributes to compare when diffing
             attrs = ('code','data')
-            return all([getattr(self,x) == getattr(other,x) for x in attrs])
+            return all(getattr(self,x) == getattr(other,x) for x in attrs)
 
 class RR(object):
 
@@ -859,14 +859,14 @@ class RR(object):
         # Handle OPT specially as may be different types (RR/EDNS0)
         if self.rtype == QTYPE.OPT and getattr(other,"rtype",False) == QTYPE.OPT:
             attrs = ('rname','rclass','rtype','ttl','rdata')
-            return all([getattr(self,x) == getattr(other,x) for x in attrs])
+            return all(getattr(self,x) == getattr(other,x) for x in attrs)
         else:
             if type(other) != type(self):
                 return False
             else:
                 # List of attributes to compare when diffing (ignore ttl)
                 attrs = ('rname','rclass','rtype','rdata')
-                return all([getattr(self,x) == getattr(other,x) for x in attrs])
+                return all(getattr(self,x) == getattr(other,x) for x in attrs)
 
 class EDNS0(RR):
 
@@ -916,9 +916,9 @@ class EDNS0(RR):
         check_range('ext_rcode',ext_rcode,0,255)
         check_range('version',version,0,255)
         edns_flags = { 'do' : 1 << 15 }
-        flag_bitmap = sum([edns_flags[x] for x in flags.split()])
+        flag_bitmap = sum(edns_flags[x] for x in flags.split())
         ttl = (ext_rcode << 24) + (version << 16) + flag_bitmap
-        if opts and not all([isinstance(o,EDNSOption) for o in opts]):
+        if opts and not all(isinstance(o,EDNSOption) for o in opts):
             raise ValueError("Option must be instance of EDNSOption")
         super(EDNS0,self).__init__(rname,rtype,udp_len,ttl,opts or [])
 
@@ -994,7 +994,7 @@ class RD(object):
         if type(other) != type(self):
             return False
         else:
-            return all([getattr(self,x) == getattr(other,x) for x in self.attrs])
+            return all(getattr(self,x) == getattr(other,x) for x in self.attrs)
 
     def __ne__(self,other):
         return not(self.__eq__(other))
@@ -1057,7 +1057,7 @@ class TXT(RD):
             self.data = [ _force_bytes(x) for x in data ]
         else:
             self.data = [ _force_bytes(data) ]
-        if any([len(x)>255 for x in self.data]):
+        if any(len(x)>255 for x in self.data):
             raise DNSError("TXT record too long: %s" % self.data)
 
     def pack(self,buffer):
